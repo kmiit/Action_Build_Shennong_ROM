@@ -229,6 +229,9 @@ echo -e "${Red}- 替换 displayconfig 文件"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/displayconfig/*
 sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/displayconfig.zip -d "$GITHUB_WORKSPACE"/images/product/etc/displayconfig/
 # 修复精准电量 (亮屏可用时长)
+echo -e "${Red}- 修复精准电量 (亮屏可用时长)"
+sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/app/PowerKeeper/*
+sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/PowerKeeper.zip -d "$GITHUB_WORKSPACE"/images/system/system/app/PowerKeeper/
 # 统一 build.prop
 echo -e "${Red}- 统一 build.prop"
 sudo sed -i 's/ro.build.user=[^*]*/ro.build.user=YuKongA/' "$GITHUB_WORKSPACE"/images/system/system/build.prop
