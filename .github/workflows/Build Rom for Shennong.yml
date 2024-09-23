@@ -5,11 +5,11 @@ on:
       URL:
         description: "移植包下载地址"
         required: true
-        default: 'https://bkt-sgp-miui-ota-update-alisgp.oss-ap-southeast-1.aliyuncs.com/OS1.0.8.0.UNACNXM/miui_AURORA_OS1.0.8.0.UNACNXM_b427cc3ce7_14.0.zip'
+        default: 'https://bkt-sgp-miui-ota-update-alisgp.oss-ap-southeast-1.aliyuncs.com/OS1.1.3.0.VNCCNXM.BETA/houji-ota_full-OS1.1.3.0.VNCCNXM.BETA-user-15.0-31653a8aee.zip'
       VENDOR_URL:
         description: "底包下载地址"
         required: true
-        default: 'https://ultimateota.d.miui.com/OS1.0.38.0.UNBCNXM/miui_SHENNONG_OS1.0.38.0.UNBCNXM_0eb6fa6030_14.0.zip?t=1712723057&s=8b6db0e1a60ee3b75e6f6cc7e8716c72'
+        default: 'https://bn.d.miui.com/OS1.0.48.0.UNBCNXM/miui_SHENNONG_OS1.0.48.0.UNBCNXM_fab4551425_14.0.zip'
 
 jobs:
   build:
