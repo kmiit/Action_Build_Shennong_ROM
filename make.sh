@@ -19,7 +19,7 @@ vendor_os_version=$(echo ${VENDOR_URL} | cut -d"/" -f4)          # 底包的 OS 
 vendor_version=$(echo ${vendor_os_version} | sed 's/OS1/V816/g') # 底包的实际版本号, 例: V816.0.32.0.UNCCNXM
 vendor_zip_name=$(echo ${VENDOR_URL} | cut -d"/" -f5)            # 底包的 zip 名称, 例: miui_HOUJI_OS1.0.32.0.UNCCNXM_4fd0e15877_14.0.zip
 
-android_version=$(echo ${URL} | cut -d"_" -f5 | cut -d"." -f1) # Android 版本号, 例: 14
+android_version=$(echo ${URL} | cut -d"_" -f13) # Android 版本号, 例: 14
 build_time=$(date) && build_utc=$(date -d "$build_time" +%s)   # 构建时间
 
 sudo timedatectl set-timezone Asia/Shanghai
@@ -234,7 +234,7 @@ sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/app/PowerKeeper/*
 sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/PowerKeeper.zip -d "$GITHUB_WORKSPACE"/images/system/system/app/PowerKeeper/
 # 统一 build.prop
 echo -e "${Red}- 统一 build.prop"
-sudo sed -i 's/ro.build.user=[^*]*/ro.build.user=YuKongA/' "$GITHUB_WORKSPACE"/images/system/system/build.prop
+sudo sed -i 's/ro.build.user=[^*]*/ro.build.user=kmiit/' "$GITHUB_WORKSPACE"/images/system/system/build.prop
 for port_build_prop in $(sudo find "$GITHUB_WORKSPACE"/images/ -type f -name "build.prop"); do
   sudo sed -i 's/build.date=[^*]*/build.date='"$build_time"'/' "$port_build_prop"
   sudo sed -i 's/build.date.utc=[^*]*/build.date.utc='"$build_utc"'/' "$port_build_prop"
@@ -261,6 +261,7 @@ done
 # 分辨率修改
 echo -e "${Red}- 分辨率修改"
 sudo sed -i 's/persist.miui.density_v2=[^*]*/persist.miui.density_v2=560/' "$GITHUB_WORKSPACE"/images/product/etc/build.prop
+sudo sed -i 's/ro.sf.lcd_density=[^*]*/ro.sf.lcd_density=560/' "$GITHUB_WORKSPACE"/images/product/etc/build.prop
 # 替换相机
 echo -e "${Red}- 替换相机"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera/*
@@ -310,23 +311,23 @@ sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/recovery.zip -d "$GITHUB_
 echo -e "${Red}- 添加刷机脚本"
 sudo unzip -o -q "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"/images
 # 移除 Android 签名校验
-sudo mkdir -p "$GITHUB_WORKSPACE"/apk/
-echo -e "${Red}- 移除 Android 签名校验"
-sudo cp -rf "$GITHUB_WORKSPACE"/images/system/system/framework/services.jar "$GITHUB_WORKSPACE"/apk/services.apk
-cd "$GITHUB_WORKSPACE"/apk
-sudo $apktool_jar d -q "$GITHUB_WORKSPACE"/apk/services.apk
-fbynr='getMinimumSignatureSchemeVersionForTargetSdk'
-sudo find "$GITHUB_WORKSPACE"/apk/services/smali_classes2/com/android/server/pm/ "$GITHUB_WORKSPACE"/apk/services/smali_classes2/com/android/server/pm/pkg/parsing/ -type f -maxdepth 1 -name "*.smali" -exec grep -H "$fbynr" {} \; | cut -d ':' -f 1 | while read -r i; do
-  hs=$(grep -n "$fbynr" "$i" | cut -d ':' -f 1)
-  sz=$(sudo tail -n +"$hs" "$i" | grep -m 1 "move-result" | tr -dc '0-9')
-  hs1=$(sudo awk -v HS=$hs 'NR>=HS && /move-result /{print NR; exit}' "$i")
-  hss=$hs
-  sedsc="const/4 v${sz}, 0x0"
-  { sudo sed -i "${hs},${hs1}d" "$i" && sudo sed -i "${hss}i\\${sedsc}" "$i"; } && echo -e "${Yellow}- ${i} 修改成功"
-done
-cd "$GITHUB_WORKSPACE"/apk/services/
-sudo $apktool_jar b -q -f -c "$GITHUB_WORKSPACE"/apk/services/ -o services.jar
-sudo cp -rf "$GITHUB_WORKSPACE"/apk/services/services.jar "$GITHUB_WORKSPACE"/images/system/system/framework/services.jar
+# sudo mkdir -p "$GITHUB_WORKSPACE"/apk/
+# echo -e "${Red}- 移除 Android 签名校验"
+# sudo cp -rf "$GITHUB_WORKSPACE"/images/system/system/framework/services.jar "$GITHUB_WORKSPACE"/apk/services.apk
+# cd "$GITHUB_WORKSPACE"/apk
+# sudo $apktool_jar d -q "$GITHUB_WORKSPACE"/apk/services.apk
+# fbynr='getMinimumSignatureSchemeVersionForTargetSdk'
+# sudo find "$GITHUB_WORKSPACE"/apk/services/smali_classes2/com/android/server/pm/ "$GITHUB_WORKSPACE"/apk/services/smali_classes2/com/android/server/pm/pkg/parsing/ -type f -maxdepth 1 -name "*.smali" -exec grep -H "$fbynr" {} \; | cut -d ':' -f 1 | while read -r i; do
+#   hs=$(grep -n "$fbynr" "$i" | cut -d ':' -f 1)
+#   sz=$(sudo tail -n +"$hs" "$i" | grep -m 1 "move-result" | tr -dc '0-9')
+#   hs1=$(sudo awk -v HS=$hs 'NR>=HS && /move-result /{print NR; exit}' "$i")
+#   hss=$hs
+#   sedsc="const/4 v${sz}, 0x0"
+#   { sudo sed -i "${hs},${hs1}d" "$i" && sudo sed -i "${hss}i\\${sedsc}" "$i"; } && echo -e "${Yellow}- ${i} 修改成功"
+# done
+# cd "$GITHUB_WORKSPACE"/apk/services/
+# sudo $apktool_jar b -q -f -c "$GITHUB_WORKSPACE"/apk/services/ -o services.jar
+# sudo cp -rf "$GITHUB_WORKSPACE"/apk/services/services.jar "$GITHUB_WORKSPACE"/images/system/system/framework/services.jar
 # 替换更改文件/删除多余文件
 echo -e "${Red}- 替换更改文件/删除多余文件"
 sudo cp -r "$GITHUB_WORKSPACE"/"${device}"/* "$GITHUB_WORKSPACE"/images
@@ -343,12 +344,46 @@ for partition in "${partitions[@]}"; do
   echo -e "${Red}- 正在生成: $partition"
   sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$partition "$GITHUB_WORKSPACE"/images/config/"$partition"_fs_config
   sudo python3 "$GITHUB_WORKSPACE"/tools/contextpatch.py "$GITHUB_WORKSPACE"/images/$partition "$GITHUB_WORKSPACE"/images/config/"$partition"_file_contexts
-  sudo $erofs_mkfs --quiet -zlz4hc,9 -T 1230768000 --mount-point /$partition --fs-config-file "$GITHUB_WORKSPACE"/images/config/"$partition"_fs_config --file-contexts "$GITHUB_WORKSPACE"/images/config/"$partition"_file_contexts "$GITHUB_WORKSPACE"/images/$partition.img "$GITHUB_WORKSPACE"/images/$partition
+  sudo $erofs_mkfs --quiet -zlz4hc,9 -T 1230768000 \
+                  --mount-point /$partition \
+                  --fs-config-file "$GITHUB_WORKSPACE"/images/config/"$partition"_fs_config \
+                  --file-contexts "$GITHUB_WORKSPACE"/images/config/"$partition"_file_contexts \
+                  "$GITHUB_WORKSPACE"/images/$partition.img "$GITHUB_WORKSPACE"/images/$partition
   eval "${partition}_size=$(du -sb "$GITHUB_WORKSPACE"/images/$partition.img | awk '{print $1}')"
   sudo rm -rf "$GITHUB_WORKSPACE"/images/$partition
 done
 sudo rm -rf "$GITHUB_WORKSPACE"/images/config
-$lpmake --metadata-size 65536 --super-name super --block-size 4096 --partition mi_ext_a:readonly:"$mi_ext_size":qti_dynamic_partitions_a --image mi_ext_a="$GITHUB_WORKSPACE"/images/mi_ext.img --partition mi_ext_b:readonly:0:qti_dynamic_partitions_b --partition odm_a:readonly:"$odm_size":qti_dynamic_partitions_a --image odm_a="$GITHUB_WORKSPACE"/images/odm.img --partition odm_b:readonly:0:qti_dynamic_partitions_b --partition product_a:readonly:"$product_size":qti_dynamic_partitions_a --image product_a="$GITHUB_WORKSPACE"/images/product.img --partition product_b:readonly:0:qti_dynamic_partitions_b --partition system_a:readonly:"$system_size":qti_dynamic_partitions_a --image system_a="$GITHUB_WORKSPACE"/images/system.img --partition system_b:readonly:0:qti_dynamic_partitions_b --partition system_ext_a:readonly:"$system_ext_size":qti_dynamic_partitions_a --image system_ext_a="$GITHUB_WORKSPACE"/images/system_ext.img --partition system_ext_b:readonly:0:qti_dynamic_partitions_b --partition system_dlkm_a:readonly:"$system_dlkm_size":qti_dynamic_partitions_a --image system_dlkm_a="$GITHUB_WORKSPACE"/images/system_dlkm.img --partition system_dlkm_b:readonly:0:qti_dynamic_partitions_b --partition vendor_a:readonly:"$vendor_size":qti_dynamic_partitions_a --image vendor_a="$GITHUB_WORKSPACE"/images/vendor.img --partition vendor_b:readonly:0:qti_dynamic_partitions_b --partition vendor_dlkm_a:readonly:"$vendor_dlkm_size":qti_dynamic_partitions_a --image vendor_dlkm_a="$GITHUB_WORKSPACE"/images/vendor_dlkm.img --partition vendor_dlkm_b:readonly:0:qti_dynamic_partitions_b --device super:8321499136 --metadata-slots 3 --group qti_dynamic_partitions_a:8321499136 --group qti_dynamic_partitions_b:8321499136 --virtual-ab -F --output "$GITHUB_WORKSPACE"/images/super.img
+$lpmake --metadata-size 65536 --super-name super --block-size 4096 \
+        --partition mi_ext_a:readonly:"$mi_ext_size":qti_dynamic_partitions_a \
+        --image mi_ext_a="$GITHUB_WORKSPACE"/images/mi_ext.img \
+        --partition mi_ext_b:readonly:0:qti_dynamic_partitions_b \
+        --partition odm_a:readonly:"$odm_size":qti_dynamic_partitions_a \
+        --image odm_a="$GITHUB_WORKSPACE"/images/odm.img \
+        --partition odm_b:readonly:0:qti_dynamic_partitions_b \
+        --partition product_a:readonly:"$product_size":qti_dynamic_partitions_a \
+        --image product_a="$GITHUB_WORKSPACE"/images/product.img \
+        --partition product_b:readonly:0:qti_dynamic_partitions_b \
+        --partition system_a:readonly:"$system_size":qti_dynamic_partitions_a \
+        --image system_a="$GITHUB_WORKSPACE"/images/system.img \
+        --partition system_b:readonly:0:qti_dynamic_partitions_b \
+        --partition system_ext_a:readonly:"$system_ext_size":qti_dynamic_partitions_a \
+        --image system_ext_a="$GITHUB_WORKSPACE"/images/system_ext.img \
+        --partition system_ext_b:readonly:0:qti_dynamic_partitions_b \
+        --partition system_dlkm_a:readonly:"$system_dlkm_size":qti_dynamic_partitions_a \
+        --image system_dlkm_a="$GITHUB_WORKSPACE"/images/system_dlkm.img \
+        --partition system_dlkm_b:readonly:0:qti_dynamic_partitions_b \
+        --partition vendor_a:readonly:"$vendor_size":qti_dynamic_partitions_a \
+        --image vendor_a="$GITHUB_WORKSPACE"/images/vendor.img \
+        --partition vendor_b:readonly:0:qti_dynamic_partitions_b \
+        --partition vendor_dlkm_a:readonly:"$vendor_dlkm_size":qti_dynamic_partitions_a \
+        --image vendor_dlkm_a="$GITHUB_WORKSPACE"/images/vendor_dlkm.img \
+        --partition vendor_dlkm_b:readonly:0:qti_dynamic_partitions_b \
+        --device super:8321499136 --metadata-slots 3 \
+        --group qti_dynamic_partitions_a:8321499136 \
+        --group qti_dynamic_partitions_b:8321499136 \
+        --virtual-ab -F \
+        --output "$GITHUB_WORKSPACE"/images/super.img
+
 End_Time 打包super
 for i in mi_ext odm product system system_ext system_dlkm vendor vendor_dlkm; do
   rm -rf "$GITHUB_WORKSPACE"/images/$i.img
@@ -365,15 +400,15 @@ End_Time 压缩super.zst
 # 生成卡刷包
 echo -e "${Red}- 生成卡刷包"
 Start_Time
-sudo $a7z a "$GITHUB_WORKSPACE"/zip/miui_${device}_${port_os_version}.zip "$GITHUB_WORKSPACE"/images/* >/dev/null
+sudo $a7z a "$GITHUB_WORKSPACE"/zip/${device}-ota_full-${port_os_version}-usr-${android_version}.zip "$GITHUB_WORKSPACE"/images/* >/dev/null
 sudo rm -rf "$GITHUB_WORKSPACE"/images
 End_Time 压缩卡刷包
 # 定制 ROM 包名
 echo -e "${Red}- 定制 ROM 包名"
-md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_${device}_${port_os_version}.zip)
+md5=$(md5sum "$GITHUB_WORKSPACE"/zip/${device}-ota_full-${port_os_version}-usr-${android_version}.zip)
 echo "MD5=${md5:0:32}" >>$GITHUB_ENV
 zip_md5=${md5:0:10}
-rom_name="miui_SHENNONG_${port_os_version}_${zip_md5}_${android_version}.0_kmiit.zip"
-sudo mv "$GITHUB_WORKSPACE"/zip/miui_${device}_${port_os_version}.zip "$GITHUB_WORKSPACE"/zip/"${rom_name}"
+rom_name="${device}-ota_full-${port_os_version}-usr-${android_version}-${zip_md5}_kmiit.zip"
+sudo mv "$GITHUB_WORKSPACE"/zip/${device}-ota_full-${port_os_version}-usr-${android_version}.zip "$GITHUB_WORKSPACE"/zip/"${rom_name}"
 echo "rom_name=$rom_name" >>$GITHUB_ENV
 ### 输出卡刷包结束
