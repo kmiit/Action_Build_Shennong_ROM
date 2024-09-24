@@ -219,7 +219,7 @@ sudo cp -f "$GITHUB_WORKSPACE"/"${device}"_files/fstab.qcom "$GITHUB_WORKSPACE"/
 # 替换 Product 的叠加层
 echo -e "${Red}- 替换 product 的叠加层"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/*
-sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/overlay "$GITHUB_WORKSPACE"/images/product/overlay
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/overlay/* "$GITHUB_WORKSPACE"/images/product/overlay/
 # 替换 device_features 文件
 echo -e "${Red}- 替换 device_features 文件"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
