@@ -331,6 +331,7 @@ sudo unzip -o -q "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"
 # 替换更改文件/删除多余文件
 echo -e "${Red}- 替换更改文件/删除多余文件"
 sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"/product
+sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"/config/product*
 sudo cp -r "$GITHUB_WORKSPACE"/"${device}"/* "$GITHUB_WORKSPACE"/images
 sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"
 sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"_files
