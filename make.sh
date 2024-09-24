@@ -268,8 +268,8 @@ sudo rm -rf "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera/*
 sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/priv-app/MiuiCamera "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera
 # 替换相机标定
 # echo -e "${Red}- 替换相机标定"
-# sudo rm -rf "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta/*
-# sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/app/CameraTools_beta "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta
+sudo rm -rf "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta/*
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/app/CameraTools_beta "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta
 # 占位广告应用
 echo -e "${Red}- 占位广告应用"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/app/MSA/*
