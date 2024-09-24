@@ -223,11 +223,11 @@ sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/overlay/* "$GITHUB_WORKSPACE
 # 替换 device_features 文件
 echo -e "${Red}- 替换 device_features 文件"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
-sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/etc/device_features "$GITHUB_WORKSPACE"/images/product/etc/device_features
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/etc/device_features/* "$GITHUB_WORKSPACE"/images/product/etc/device_features/
 # 替换 displayconfig 文件
 echo -e "${Red}- 替换 displayconfig 文件"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/displayconfig/*
-sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/etc/displayconfig "$GITHUB_WORKSPACE"/images/product/etc/displayconfig
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/etc/displayconfig/* "$GITHUB_WORKSPACE"/images/product/etc/displayconfig/
 # 修复精准电量 (亮屏可用时长)
 # echo -e "${Red}- 修复精准电量 (亮屏可用时长)"
 # sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/app/PowerKeeper/*
@@ -265,11 +265,11 @@ sudo sed -i 's/ro.sf.lcd_density=[^*]*/ro.sf.lcd_density=560/' "$GITHUB_WORKSPAC
 # 替换相机
 echo -e "${Red}- 替换相机"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera/*
-sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/priv-app/MiuiCamera "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/priv-app/MiuiCamera/* "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera/
 # 替换相机标定
 # echo -e "${Red}- 替换相机标定"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta/*
-sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/app/CameraTools_beta "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/app/CameraTools_beta/* "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta/
 # 占位广告应用
 echo -e "${Red}- 占位广告应用"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/app/MSA/*
