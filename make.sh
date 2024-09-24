@@ -108,10 +108,10 @@ rm -rf "$GITHUB_WORKSPACE"/${vendor_zip_name}
 End_Time 解压底包
 mkdir -p "$GITHUB_WORKSPACE"/Extra_dir
 echo -e "${Red}- 开始解底包payload"
-$payload_extract -s -o "$GITHUB_WORKSPACE"/Extra_dir/ -i "$GITHUB_WORKSPACE"/"${device}"/payload.bin -X system,system_ext,product -e -T0
+$payload_extract -s -o "$GITHUB_WORKSPACE"/Extra_dir/ -i "$GITHUB_WORKSPACE"/"${device}"/payload.bin -X system,system_ext -e -T0
 sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"/payload.bin
 echo -e "${Red}- 开始分解底包image"
-for i in mi_ext odm system_dlkm vendor vendor_dlkm; do
+for i in mi_ext odm product system_dlkm vendor vendor_dlkm; do
   echo -e "${Yellow}- 正在分解底包: $i.img"
   cd "$GITHUB_WORKSPACE"/"${device}"
   sudo $erofs_extract -s -i "$GITHUB_WORKSPACE"/Extra_dir/$i.img -x
@@ -219,15 +219,15 @@ sudo cp -f "$GITHUB_WORKSPACE"/"${device}"_files/fstab.qcom "$GITHUB_WORKSPACE"/
 # 替换 Product 的叠加层
 echo -e "${Red}- 替换 product 的叠加层"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/*
-sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/overlay.zip -d "$GITHUB_WORKSPACE"/images/product/overlay
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/overlay "$GITHUB_WORKSPACE"/images/product/overlay
 # 替换 device_features 文件
 echo -e "${Red}- 替换 device_features 文件"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
-sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/device_features.zip -d "$GITHUB_WORKSPACE"/images/product/etc/device_features/
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/etc/device_features "$GITHUB_WORKSPACE"/images/product/etc/device_features
 # 替换 displayconfig 文件
 echo -e "${Red}- 替换 displayconfig 文件"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/displayconfig/*
-sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/displayconfig.zip -d "$GITHUB_WORKSPACE"/images/product/etc/displayconfig/
+sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"/product/etc/displayconfig "$GITHUB_WORKSPACE"/images/product/etc/displayconfig
 # 修复精准电量 (亮屏可用时长)
 echo -e "${Red}- 修复精准电量 (亮屏可用时长)"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/app/PowerKeeper/*
@@ -265,11 +265,11 @@ sudo sed -i 's/ro.sf.lcd_density=[^*]*/ro.sf.lcd_density=560/' "$GITHUB_WORKSPAC
 # 替换相机
 echo -e "${Red}- 替换相机"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera/*
-sudo cat "$GITHUB_WORKSPACE"/"${device}"_files/MiuiCamera.apk.1 "$GITHUB_WORKSPACE"/"${device}"_files/MiuiCamera.apk.2 "$GITHUB_WORKSPACE"/"${device}"_files/MiuiCamera.apk.3 >"$GITHUB_WORKSPACE"/"${device}"_files/MiuiCamera.apk
-sudo cp -f "$GITHUB_WORKSPACE"/"${device}"_files/MiuiCamera.apk "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera/
+sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/priv-app/MiuiCamera "$GITHUB_WORKSPACE"/images/product/priv-app/MiuiCamera
 # 替换相机标定
-echo -e "${Red}- 替换相机标定"
-sudo unzip -o -q "$GITHUB_WORKSPACE"/"${device}"_files/CameraTools_beta.zip -d "$GITHUB_WORKSPACE"/images/product/app/
+# echo -e "${Red}- 替换相机标定"
+# sudo rm -rf "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta/*
+# sudo cp -rf "$GITHUB_WORKSPACE"/"${device}"/product/app/CameraTools_beta "$GITHUB_WORKSPACE"/images/product/app/CameraTools_beta
 # 占位广告应用
 echo -e "${Red}- 占位广告应用"
 sudo rm -rf "$GITHUB_WORKSPACE"/images/product/app/MSA/*
@@ -330,6 +330,7 @@ sudo unzip -o -q "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"
 # sudo cp -rf "$GITHUB_WORKSPACE"/apk/services/services.jar "$GITHUB_WORKSPACE"/images/system/system/framework/services.jar
 # 替换更改文件/删除多余文件
 echo -e "${Red}- 替换更改文件/删除多余文件"
+sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"/product
 sudo cp -r "$GITHUB_WORKSPACE"/"${device}"/* "$GITHUB_WORKSPACE"/images
 sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"
 sudo rm -rf "$GITHUB_WORKSPACE"/"${device}"_files
