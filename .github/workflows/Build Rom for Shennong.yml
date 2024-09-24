@@ -9,7 +9,7 @@ on:
       VENDOR_URL:
         description: "底包下载地址"
         required: true
-        default: 'https://bn.d.miui.com/OS1.0.48.0.UNBCNXM/miui_SHENNONG_OS1.0.48.0.UNBCNXM_fab4551425_14.0.zip'
+        default: 'https://bn.d.miui.com/OS1.0.50.0.UNBCNXM/miui_SHENNONG_OS1.0.50.0.UNBCNXM_388409ff36_14.0.zip'
 
 jobs:
   build:
