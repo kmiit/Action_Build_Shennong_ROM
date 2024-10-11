@@ -14,10 +14,10 @@ Green='\033[1;32m'  # 粗体绿色
 
 port_os_version=$(echo ${URL} | cut -d"/" -f4)                   # 移植包的 OS 版本号, 例: OS1.0.7.0.UNACNXM
 port_version=$(echo ${port_os_version} | sed 's/OS1/V816/g')     # 移植包的实际版本号, 例: V816.0.7.0.UNACNXM
-port_zip_name=$(echo ${URL} | cut -d"/" -f5)                     # 移植包的 zip 名称, 例: miui_AURORA_OS1.0.7.0.UNACNXM_81a48e3c20_14.0.zip
+port_zip_name=$(echo ${URL} | cut -d"/" -f5 | cut -d"?" -f1)                     # 移植包的 zip 名称, 例: miui_AURORA_OS1.0.7.0.UNACNXM_81a48e3c20_14.0.zip
 vendor_os_version=$(echo ${VENDOR_URL} | cut -d"/" -f4)          # 底包的 OS 版本号, 例: OS1.0.32.0.UNCCNXM
 vendor_version=$(echo ${vendor_os_version} | sed 's/OS1/V816/g') # 底包的实际版本号, 例: V816.0.32.0.UNCCNXM
-vendor_zip_name=$(echo ${VENDOR_URL} | cut -d"/" -f5)            # 底包的 zip 名称, 例: miui_HOUJI_OS1.0.32.0.UNCCNXM_4fd0e15877_14.0.zip
+vendor_zip_name=$(echo ${VENDOR_URL} | cut -d"/" -f5 | cut -d"?" -f1)            # 底包的 zip 名称, 例: miui_HOUJI_OS1.0.32.0.UNCCNXM_4fd0e15877_14.0.zip
 
 android_version=$(echo ${URL} | cut -d"-" -f13) # Android 版本号, 例: 14
 build_time=$(date) && build_utc=$(date -d "$build_time" +%s)   # 构建时间
